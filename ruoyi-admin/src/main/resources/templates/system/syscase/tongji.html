@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('案件统计')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: bootstrap-fileinput-css"/>
+    <th:block th:include="include :: summernote-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div style="height:600px" id="echarts-map-chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: bootstrap-fileinput-js"/>
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: echarts-js" />
+<script th:inline="javascript">
+
+
+    var prefix = ctx + "system/analyse";
+    var a=[];
+
+    $.ajax({
+        type: "post",
+        url: prefix + "/liAnTongJi",
+        success: function(data) {
+            for (let i = 0; i < data.length; i++) {
+                let tongji={};
+                tongji.product=data[i].deptName;
+                tongji.案件申报=data[i].liAn;
+                tongji.立案数量=data[i].tongJi;
+                if (data[i].tongJi==0){
+                    tongji.立案率=0;
+                }else {
+                    tongji.立案率=data[i].tongJi/data[i].liAn;
+                }
+                a.push(tongji);
+            }
+console.log(a)
+            var mapChart = echarts.init(document.getElementById("echarts-map-chart"));
+            var option = {
+                legend: {},
+                tooltip: {},
+                dataset: {
+                    dimensions: ['product', '案件申报', '立案数量', '立案率'],
+                    source: a
+                },
+                xAxis: { type: 'category' },
+                yAxis: {},
+                series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }]
+            };
+            mapChart.setOption(option);
+            $(window).resize(mapChart.resize);
+        }
+    });
+
+
+
+
+</script>
+</body>
+</html>

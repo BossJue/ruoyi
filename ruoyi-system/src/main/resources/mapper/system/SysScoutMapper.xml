@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysScoutMapper">
+    
+    <resultMap type="SysScout" id="SysScoutResult">
+        <result property="scoutId"    column="scout_id"    />
+        <result property="scoutCotent"    column="scout_cotent"    />
+        <result property="caseId"    column="case_id"    />
+    </resultMap>
+
+    <sql id="selectSysScoutVo">
+        select scout_id, scout_cotent, case_id from sys_scout
+    </sql>
+
+    <select id="selectSysScoutList" parameterType="SysScout" resultMap="SysScoutResult">
+        <include refid="selectSysScoutVo"/>
+        <where>  
+            <if test="scoutCotent != null  and scoutCotent != ''"> and scout_cotent = #{scoutCotent}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysScoutByScoutId" parameterType="Long" resultMap="SysScoutResult">
+        <include refid="selectSysScoutVo"/>
+        where scout_id = #{scoutId}
+    </select>
+        
+    <insert id="insertSysScout" parameterType="SysScout">
+        insert into sys_scout
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="scoutId != null">scout_id,</if>
+            <if test="scoutCotent != null">scout_cotent,</if>
+            <if test="caseId != null">case_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="scoutId != null">#{scoutId},</if>
+            <if test="scoutCotent != null">#{scoutCotent},</if>
+            <if test="caseId != null">#{caseId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysScout" parameterType="SysScout">
+        update sys_scout
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="scoutCotent != null">scout_cotent = #{scoutCotent},</if>
+            <if test="caseId != null">case_id = #{caseId},</if>
+        </trim>
+        where scout_id = #{scoutId}
+    </update>
+
+    <delete id="deleteSysScoutByScoutId" parameterType="Long">
+        delete from sys_scout where scout_id = #{scoutId}
+    </delete>
+
+    <delete id="deleteSysScoutByScoutIds" parameterType="String">
+        delete from sys_scout where scout_id in 
+        <foreach item="scoutId" collection="array" open="(" separator="," close=")">
+            #{scoutId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysCaseMapper">
+
+    <resultMap type="SysCase" id="SysCaseResult">
+        <result property="caseId"    column="case_id"    />
+        <result property="caseName"    column="case_name"    />
+        <result property="caseNum"    column="case_num"    />
+        <result property="content"    column="content"    />
+        <result property="caseDate"    column="case_date"    />
+        <result property="address"    column="address"    />
+        <result property="caseWay"    column="case_way"    />
+        <result property="offenderChar"    column="offender_char"    />
+        <result property="callPoliceInfo"    column="call_police_info"    />
+        <result property="caseStatus"    column="case_status"    />
+        <result property="casePic"    column="case_pic"    />
+        <result property="caseSuggest"    column="case_suggest"    />
+        <result property="remark"    column="remark"    />
+        <result property="userId"    column="user_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="shouLi"    column="shouli"    />
+    </resultMap>
+
+    <sql id="selectSysCaseVo">
+        select case_id, case_name, case_num, content, case_date, address, case_way, offender_char, call_police_info, case_status, case_pic, case_suggest, remark,shouli from sys_case
+    </sql>
+
+    <select id="selectSysCaseList" parameterType="SysCase" resultMap="SysCaseResult">
+        <include refid="selectSysCaseVo"/>
+        left join sys_dept  on sys_case.dept_id = sys_dept.dept_id
+        <where>
+            <if test="caseName != null  and caseName != ''"> and case_name like concat('%', #{caseName}, '%')</if>
+            <if test="caseNum != null  and caseNum != ''"> and case_num = #{caseNum}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="caseDate != null "> and case_date = #{caseDate}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="caseWay != null  and caseWay != ''"> and case_way = #{caseWay}</if>
+            <if test="offenderChar != null  and offenderChar != ''"> and offender_char = #{offenderChar}</if>
+            <if test="callPoliceInfo != null  and callPoliceInfo != ''"> and call_police_info = #{callPoliceInfo}</if>
+            <if test="caseStatus != null  and caseStatus != ''"> and case_status = #{caseStatus}</if>
+            <if test="shouLi != null  and shouLi != ''"> and shouli = #{shouLi}</if>
+            <if test="deptId != null  and deptId != ''"> and sys_case.dept_id = #{deptId}</if>
+            <if test="casePic != null  and casePic != ''"> and case_pic = #{casePic}</if>
+            <if test="caseSuggest != null  and caseSuggest != ''"> and case_suggest = #{caseSuggest}</if>
+            ${params.dataScope}
+        </where>
+        <!-- 数据范围过滤 -->
+
+    </select>
+
+    <select id="selectSysCaseByCaseId" parameterType="Long" resultMap="SysCaseResult">
+        <include refid="selectSysCaseVo"/>
+        where case_id = #{caseId}
+    </select>
+
+    <insert id="insertSysCase" parameterType="SysCase" useGeneratedKeys="true" keyProperty="caseId">
+        insert into sys_case
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="caseName != null">case_name,</if>
+            <if test="caseNum != null">case_num,</if>
+            <if test="content != null">content,</if>
+            <if test="caseDate != null">case_date,</if>
+            <if test="address != null">address,</if>
+            <if test="caseWay != null">case_way,</if>
+            <if test="offenderChar != null">offender_char,</if>
+            <if test="callPoliceInfo != null">call_police_info,</if>
+            <if test="caseStatus != null">case_status,</if>
+            <if test="shouLi != null">shouli,</if>
+            <if test="casePic != null">case_pic,</if>
+            <if test="caseSuggest != null">case_suggest,</if>
+            <if test="remark != null">remark,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="deptId != null">dept_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="caseName != null">#{caseName},</if>
+            <if test="caseNum != null">#{caseNum},</if>
+            <if test="content != null">#{content},</if>
+            <if test="caseDate != null">#{caseDate},</if>
+            <if test="address != null">#{address},</if>
+            <if test="caseWay != null">#{caseWay},</if>
+            <if test="offenderChar != null">#{offenderChar},</if>
+            <if test="callPoliceInfo != null">#{callPoliceInfo},</if>
+            <if test="caseStatus != null">#{caseStatus},</if>
+            <if test="shouLi != null">#{shouLi},</if>
+            <if test="casePic != null">#{casePic},</if>
+            <if test="caseSuggest != null">#{caseSuggest},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="deptId != null">#{deptId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysCase" parameterType="SysCase">
+        update sys_case
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="caseName != null">case_name = #{caseName},</if>
+            <if test="caseNum != null">case_num = #{caseNum},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="caseDate != null">case_date = #{caseDate},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="caseWay != null">case_way = #{caseWay},</if>
+            <if test="offenderChar != null">offender_char = #{offenderChar},</if>
+            <if test="callPoliceInfo != null">call_police_info = #{callPoliceInfo},</if>
+            <if test="caseStatus != null">case_status = #{caseStatus},</if>
+            <if test="shouLi != null">shouli = #{shouLi},</if>
+            <if test="casePic != null">case_pic = #{casePic},</if>
+            <if test="caseSuggest != null">case_suggest = #{caseSuggest},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+        </trim>
+        where case_id = #{caseId}
+    </update>
+
+    <delete id="deleteSysCaseByCaseId" parameterType="Long">
+        delete from sys_case where case_id = #{caseId}
+    </delete>
+
+    <delete id="deleteSysCaseByCaseIds" parameterType="String">
+        delete from sys_case where case_id in
+        <foreach item="caseId" collection="array" open="(" separator="," close=")">
+            #{caseId}
+        </foreach>
+    </delete>
+
+</mapper>

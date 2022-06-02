@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysAnalyseMapper">
+
+    <resultMap type="SysAnalyse" id="SysAnalyseResult">
+        <result property="id"    column="id"    />
+        <result property="caseId"    column="case_id"    />
+        <result property="toCaseId"    column="to_case_id"    />
+        <result property="caseAnalyse"    column="case_analyse"    />
+        <result property="caseName"    column="case_name"    />
+        <result property="toCaseName"    column="to_case_name"    />
+    </resultMap>
+
+    <sql id="selectSysAnalyseVo">
+        select id, case_id, to_case_id, case_analyse, case_name, to_case_name from sys_analyse
+    </sql>
+
+    <select id="selectSysAnalyseList" parameterType="SysAnalyse" resultMap="SysAnalyseResult">
+        <include refid="selectSysAnalyseVo"/>
+        <where>
+            <if test="caseId != null "> and case_id = #{caseId}</if>
+            <if test="toCaseId != null "> and to_case_id = #{toCaseId}</if>
+            <if test="caseAnalyse != null  and caseAnalyse != ''"> and case_analyse = #{caseAnalyse}</if>
+            <if test="caseName != null  and caseName != ''"> and case_name like concat('%', #{caseName}, '%')</if>
+            <if test="toCaseName != null  and toCaseName != ''"> and to_case_name like concat('%', #{toCaseName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectSysAnalyseById" parameterType="Long" resultMap="SysAnalyseResult">
+        <include refid="selectSysAnalyseVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSysAnalyse" parameterType="SysAnalyse" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_analyse
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="caseId != null">case_id,</if>
+            <if test="toCaseId != null">to_case_id,</if>
+            <if test="caseAnalyse != null">case_analyse,</if>
+            <if test="caseName != null">case_name,</if>
+            <if test="toCaseName != null">to_case_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="caseId != null">#{caseId},</if>
+            <if test="toCaseId != null">#{toCaseId},</if>
+            <if test="caseAnalyse != null">#{caseAnalyse},</if>
+            <if test="caseName != null">#{caseName},</if>
+            <if test="toCaseName != null">#{toCaseName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysAnalyse" parameterType="SysAnalyse">
+        update sys_analyse
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="caseId != null">case_id = #{caseId},</if>
+            <if test="toCaseId != null">to_case_id = #{toCaseId},</if>
+            <if test="caseAnalyse != null">case_analyse = #{caseAnalyse},</if>
+            <if test="caseName != null">case_name = #{caseName},</if>
+            <if test="toCaseName != null">to_case_name = #{toCaseName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysAnalyseById" parameterType="Long">
+        delete from sys_analyse where id = #{id}
+    </delete>
+
+    <delete id="deleteSysAnalyseByIds" parameterType="String">
+        delete from sys_analyse where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteAll">
+        delete from sys_analyse;
+    </delete>
+
+    <select id="liAnTongJi" resultType="map">
+        select sys_dept.dept_name as deptName,tongJi from (SELECT  dept_id,count(*) as tongJi FROM `sys_case` WHERE case_status in (3,4,5) GROUP BY dept_id) a LEFT JOIN sys_dept on sys_dept.dept_id=a.dept_id;
+    </select>
+
+</mapper>

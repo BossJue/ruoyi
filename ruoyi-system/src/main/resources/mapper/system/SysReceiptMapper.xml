@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysReceiptMapper">
+    
+    <resultMap type="SysReceipt" id="SysReceiptResult">
+        <result property="receiptId"    column="receipt_id"    />
+        <result property="policeMan"    column="police_man"    />
+        <result property="caseName"    column="case_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="caseId"    column="case_id"    />
+    </resultMap>
+
+    <sql id="selectSysReceiptVo">
+        select receipt_id, police_man, case_name, create_time, dept_name, case_id from sys_receipt
+    </sql>
+
+    <select id="selectSysReceiptList" parameterType="SysReceipt" resultMap="SysReceiptResult">
+        <include refid="selectSysReceiptVo"/>
+        <where>  
+            <if test="policeMan != null  and policeMan != ''"> and police_man = #{policeMan}</if>
+            <if test="caseName != null  and caseName != ''"> and case_name like concat('%', #{caseName}, '%')</if>
+            <if test="deptName != null  and deptName != ''"> and dept_name like concat('%', #{deptName}, '%')</if>
+            <if test="caseId != null "> and case_id = #{caseId}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysReceiptByReceiptId" parameterType="Long" resultMap="SysReceiptResult">
+        <include refid="selectSysReceiptVo"/>
+        where receipt_id = #{receiptId}
+    </select>
+        
+    <insert id="insertSysReceipt" parameterType="SysReceipt" useGeneratedKeys="true" keyProperty="receiptId">
+        insert into sys_receipt
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="policeMan != null">police_man,</if>
+            <if test="caseName != null">case_name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="deptName != null">dept_name,</if>
+            <if test="caseId != null">case_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="policeMan != null">#{policeMan},</if>
+            <if test="caseName != null">#{caseName},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="deptName != null">#{deptName},</if>
+            <if test="caseId != null">#{caseId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysReceipt" parameterType="SysReceipt">
+        update sys_receipt
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="policeMan != null">police_man = #{policeMan},</if>
+            <if test="caseName != null">case_name = #{caseName},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="deptName != null">dept_name = #{deptName},</if>
+            <if test="caseId != null">case_id = #{caseId},</if>
+        </trim>
+        where receipt_id = #{receiptId}
+    </update>
+
+    <delete id="deleteSysReceiptByReceiptId" parameterType="Long">
+        delete from sys_receipt where receipt_id = #{receiptId}
+    </delete>
+
+    <delete id="deleteSysReceiptByReceiptIds" parameterType="String">
+        delete from sys_receipt where receipt_id in 
+        <foreach item="receiptId" collection="array" open="(" separator="," close=")">
+            #{receiptId}
+        </foreach>
+    </delete>
+
+</mapper>
